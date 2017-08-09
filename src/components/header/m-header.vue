@@ -29,20 +29,20 @@
     <div class="background">
       <img :src="seller.avatar" width="100%" height="100%">
     </div>
-    <div v-show="detailShow" class="detail"></div>
+    <detail ref="detail" :seller="seller"></detail>
   </div>
 </template>
 
 <script type="text/javascript">
+  import Detail from '@/components/detail/detail'
+
   export default {
     props: {
-      seller: {
-        type: Object
-      }
+      seller: Object
     },
     data () {
       return {
-        detailShow: false
+        // seller: this.seller
       }
     },
     created () {
@@ -50,8 +50,11 @@
     },
     methods: {
       showDetail () {
-        this.detailShow = true
+        this.$refs.detail.detailShow = true
       }
+    },
+    components: {
+      Detail
     }
   }
 </script>
@@ -193,16 +196,6 @@
       height 100%
       z-index -1
       filter blur(10px)
-    }
-    .detail {
-      position fixed
-      left 0
-      top 0
-      z-index 100
-      width 100%
-      height 100%
-      overflow auto
-      background-color rgba(7, 17, 27, .8)
     }
   }
 
