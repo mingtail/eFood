@@ -29,7 +29,7 @@
     <div class="background">
       <img :src="seller.avatar" width="100%" height="100%">
     </div>
-    <detail ref="detail" :seller="seller"></detail>
+    <detail ref="detail" :seller="seller" :classMap="classMap"></detail>
   </div>
 </template>
 
