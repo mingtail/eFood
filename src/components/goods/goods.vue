@@ -2,7 +2,11 @@
   <div class="goods">
     <div class="menu-wrapper" ref="menuWrapper">
       <ul>
-        <li v-for="(item, index) in goods" class="menu-item" :class="{'current': currentIndex === index}" @click="">
+        <li
+          v-for="(item, index) in goods"
+          class="menu-item"
+          :class="{'current': currentIndex === index}"
+          @click="selectMenu(index)">
           <span class="text border-1px">
             <span v-show="item.type>0" class="icon" :class="classMap[item.type]"></span>{{item.name}}
           </span>
@@ -34,11 +38,13 @@
         </li>
       </ul>
     </div>
+    <shopcart :delivery-price="seller.deliveryPrice" :min-price="seller.minPrice"></shopcart>
   </div>
 </template>
 
 <script type="text/javascript">
   import BScroll from 'better-scroll'
+  import Shopcart from '@/components/shopcart/shopcart'
 
   const ERR_OK = 0
 
@@ -56,9 +62,9 @@
     computed: {
       currentIndex () {
         for (let i = 0; i < this.listHeight.length; i++) {
-          let height1 = this.listHeight[i]
-          let height2 = this.listHeight[i + 1]
-          if (!height2 || (this.scrollY >= height1 && this.scrollY < height2)) {
+          let curHeight = this.listHeight[i]
+          let nextHeight = this.listHeight[i + 1]
+          if (!nextHeight || (this.scrollY >= curHeight && this.scrollY < nextHeight)) {
             return i
           }
         }
@@ -81,8 +87,16 @@
       })
     },
     methods: {
+      selectMenu (index) {
+        let foodList = this.$refs.foodsWrapper.getElementsByClassName('food-list-hook')
+        let el = foodList[index]
+        this.foodsScroll.scrollToElement(el, 300)
+        // TODO console.log(index)
+      },
       _initScroll () {
-        this.menuScroll = new BScroll(this.$refs.menuWrapper, {})
+        this.menuScroll = new BScroll(this.$refs.menuWrapper, {
+          click: true
+        })
 
         this.foodsScroll = new BScroll(this.$refs.foodsWrapper, {
           probeType: 3
@@ -98,13 +112,14 @@
         this.listHeight.push(height)
         for (let i = 0; i < foodList.length; i++) {
           let item = foodList[i]
-          height += item.clientHeight - 50
+          height += item.clientHeight
           this.listHeight.push(height)
-          // console.log(i)
         }
-        console.log(foodList.length)
-        console.log(this.listHeight)
+        // TODO console.log(this.listHeight)
       }
+    },
+    components: {
+      Shopcart
     }
   }
 </script>
@@ -134,7 +149,7 @@
           margin-top -1px
           font-weight 700
           background-color #fff
-          .text{
+          .text {
             border-none()
           }
         }
