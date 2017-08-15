@@ -23,7 +23,7 @@
                 <img width="57" height="57" :src="food.icon">
               </div>
               <div class="content">
-                <h2 c-show="food.name" class="name">{{food.name}}</h2>
+                <h2 v-show="food.name" class="name">{{food.name}}</h2>
                 <p class="desc">{{food.description}}</p>
                 <div class="extra">
                   <span class="count">月售{{food.sellCount}}</span><span>好评{{food.rating}}%</span>
@@ -31,6 +31,9 @@
                 <div class="price">
                   <span class="now">¥ {{food.price}}</span><span v-show="food.oldPrice"
                                                                  class="old">¥ {{food.oldPrice}}</span>
+                </div>
+                <div class="cart-control-wrapper">
+                  <cart-control :food="food"></cart-control>
                 </div>
               </div>
             </li>
@@ -45,6 +48,7 @@
 <script type="text/javascript">
   import BScroll from 'better-scroll'
   import Shopcart from '@/components/shopcart/shopcart'
+  import CartControl from '@/components/cartcontrol/cartcontrol'
 
   const ERR_OK = 0
 
@@ -88,10 +92,14 @@
     },
     methods: {
       selectMenu (index) {
+        // 解决pc端点击触发两次的问题,如果不是派生的点击事件就return
+        // if (!event._constructed) {
+        //   return
+        // }
+        console.log(index)
         let foodList = this.$refs.foodsWrapper.getElementsByClassName('food-list-hook')
         let el = foodList[index]
         this.foodsScroll.scrollToElement(el, 300)
-        // TODO console.log(index)
       },
       _initScroll () {
         this.menuScroll = new BScroll(this.$refs.menuWrapper, {
@@ -99,6 +107,7 @@
         })
 
         this.foodsScroll = new BScroll(this.$refs.foodsWrapper, {
+          click: true,
           probeType: 3
         })
 
@@ -119,7 +128,8 @@
       }
     },
     components: {
-      Shopcart
+      Shopcart,
+      CartControl
     }
   }
 </script>
@@ -247,6 +257,11 @@
               font-size 10px
               color rgb(147, 153, 159)
             }
+          }
+          .cart-control-wrapper {
+            position absolute
+            right 0
+            bottom 12px
           }
         }
       }
