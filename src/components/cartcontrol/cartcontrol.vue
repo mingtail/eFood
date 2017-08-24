@@ -65,7 +65,6 @@
         color rgb(0, 160, 220)
         transition all .4s linear
       }
-
     }
     .cart-count {
       display inline-block

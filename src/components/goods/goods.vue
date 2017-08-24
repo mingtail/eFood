@@ -107,7 +107,6 @@
         // if (!event._constructed) {
         //   return
         // }
-        console.log(index)
         let foodList = this.$refs.foodsWrapper.getElementsByClassName('food-list-hook')
         let el = foodList[index]
         this.foodsScroll.scrollToElement(el, 300)

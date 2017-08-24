@@ -17,10 +17,29 @@
         </div>
       </div>
     </div>
+    <div class="shopcart-list" v-show="listShow">
+      <div class="list-header">
+        <div class="title">购物车</div>
+        <div class="empty">清空</div>
+      </div>
+      <ul>
+        <li class="food" v-for="food in selectFoods">
+          <span class="name">{{food.name}}</span>
+          <div class="price">
+            <span>¥ {{food.price * food.count}}</span>
+          </div>
+          <div class="cart-control-wrapper">
+            <cart-control :food="food"></cart-control>
+          </div>
+        </li>
+      </ul>
+    </div>
   </div>
 </template>
 
 <script type="text/javascript">
+  import CartControl from '@/components/cartcontrol/cartcontrol'
+
   export default {
     props: {
       selectFoods: {
@@ -41,6 +60,11 @@
       minPrice: {
         type: Number,
         default: 0
+      }
+    },
+    data () {
+      return {
+        listShow: true
       }
     },
     computed: {
@@ -74,6 +98,9 @@
           return 'enough'
         }
       }
+    },
+    components: {
+      CartControl
     }
   }
 </script>
