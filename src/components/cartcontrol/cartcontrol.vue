@@ -22,9 +22,7 @@
 //        if (!ev._constructed) {
 //          return
 //        }
-        console.log(111)
         if (!this.food.count) {
-          console.log(this)
           this.$set(this.food, 'count', 1)
         } else {
           this.food.count++
