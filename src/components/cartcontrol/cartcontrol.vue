@@ -46,7 +46,7 @@
     }
   }
   .move-enter, .move-leave-to {
-    transform translate3D(48px, 0, 0)
+    transform translate3d(48px, 0, 0)
     opacity 0
     .inner {
       transform rotate(180deg)
