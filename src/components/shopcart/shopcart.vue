@@ -18,6 +18,17 @@
           </div>
         </div>
       </div>
+      <div class="ball-container">
+        <div v-for="ball in balls">
+          <!--<transition name="drop" @before-enter="beforeDrop" @enter="dropping" @after-enter="afterDrop">-->
+          <transition name="drop">
+            <div v-show="ball.show" class="ball">
+              <div class="inner"></div>
+            </div>
+          </transition>
+        </div>
+
+      </div>
       <transition name="fold">
         <div class="shopcart-list" v-show="listShow">
           <div class="list-header">
@@ -70,6 +81,13 @@
     data () {
       return {
         // listShow: true,
+        balls: [
+          {show: false},
+          {show: false},
+          {show: false},
+          {show: false},
+          {show: false}
+        ],
         fold: true
       }
     },
@@ -125,6 +143,9 @@
       }
     },
     methods: {
+      drop (el) {
+        console.log(el)
+      },
       toggleList () {
         if (!this.totalCount) {
           return
@@ -269,6 +290,24 @@
         }
       }
     }
+    .ball-container {
+      .ball {
+        position fixed
+        left 32px
+        bottom 22px
+        z-index 200
+        &.drop-enter-active, &.drop-leave-active {
+          transition all .4s
+          .inner {
+            width 16px
+            height 16px
+            border-radius 50%
+            background-color rgb(0, 160, 220)
+            transition all .4s
+          }
+        }
+      }
+    }
     .shopcart-list {
       position absolute
       left 0
@@ -326,6 +365,7 @@
       }
     }
   }
+
   .list-mask {
     position fixed
     left 0

@@ -33,7 +33,7 @@
                                                                  class="old">¥ {{food.oldPrice}}</span>
                 </div>
                 <div class="cart-control-wrapper">
-                  <cart-control :food="food"></cart-control>
+                  <cart-control @add="addFood" :food="food"></cart-control>
                 </div>
               </div>
             </li>
@@ -41,8 +41,9 @@
         </li>
       </ul>
     </div>
-    <shopcart :select-foods="selectFoods" :delivery-price="seller.deliveryPrice" :min-price="seller.minPrice"></shopcart>
-    <food :food="selectedFood" ref="food"></food>
+    <shopcart @add="addFood" ref="shopcart" :select-foods="selectFoods" :delivery-price="seller.deliveryPrice"
+              :min-price="seller.minPrice"></shopcart>
+    <food @add="addFood" :food="selectedFood" ref="food"></food>
   </div>
 </template>
 
@@ -117,6 +118,15 @@
       selectFood (food) {
         this.selectedFood = food
         this.$refs.food.show()
+      },
+      addFood (target) {
+        this._drop(target)
+      },
+      _drop (target) {
+        // 优化体验, 异步执行下落动画
+        this.$nextTick(() => {
+          this.$refs.shopcart.drop(target)
+        })
       },
       _initScroll () {
         this.menuScroll = new BScroll(this.$refs.menuWrapper, {

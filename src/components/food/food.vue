@@ -19,6 +19,12 @@
             <span class="now">¥ {{food.price}}</span><span v-show="food.oldPrice" class="old">¥ {{food.oldPrice}}</span>
           </div>
         </div>
+        <div class="cart-control-wrapper">
+          <cart-control :food="food"></cart-control>
+        </div>
+        <transition name="fade">
+          <div @click.stop.prevent="addFirst" class="buy" v-show="!food.count || food.count===0">加入购物车</div>
+        </transition>
       </div>
     </div>
   </transition>
@@ -26,6 +32,7 @@
 
 <script type="text/javascript">
   import BScroll from 'better-scroll'
+  import CartControl from '@/components/cartcontrol/cartcontrol'
 
   export default {
     props: {
@@ -51,7 +58,17 @@
       },
       hide () {
         this.showFlag = false
+      },
+      addFirst (event) {
+//        if (!event._constructed) {
+//          return
+//        }
+        this.$emit('add', event.target)
+        this.$set(this.food, 'count', 1)
       }
+    },
+    components: {
+      CartControl
     }
   }
 </script>
@@ -131,6 +148,31 @@
           font-size 10px
           color rgb(147, 153, 159)
         }
+      }
+    }
+    .cart-control-wrapper {
+      position absolute
+      right 12px
+      bottom 10px
+    }
+    .buy {
+      position absolute
+      right 18px
+      bottom 18px
+      z-index 10px
+      height 24px
+      line-height 24px
+      padding 0 12px
+      box-sizing border-box
+      font-size 10px
+      color #fff
+      border-radius 12px
+      background-color rgb(0, 160, 220)
+      &.fade-enter-active, &.fade-leave-active {
+        transition all .2s
+      }
+      &.fade-enter, .&.fade-leave-to {
+        opacity 0
       }
     }
   }
