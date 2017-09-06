@@ -20,10 +20,9 @@
       </div>
       <div class="ball-container">
         <div v-for="ball in balls">
-          <!--<transition name="drop" @before-enter="beforeDrop" @enter="dropping" @after-enter="afterDrop">-->
-          <transition name="drop">
+          <transition name="drop" @before-enter="beforeDrop" @enter="dropping" @after-enter="afterDrop">
             <div v-show="ball.show" class="ball">
-              <div class="inner"></div>
+              <div class="inner inner-hook"></div>
             </div>
           </transition>
         </div>
@@ -65,7 +64,7 @@
     props: {
       selectFoods: {
         type: Array,
-        default () {
+        default() {
           return []
         }
       },
@@ -78,7 +77,7 @@
         default: 0
       }
     },
-    data () {
+    data() {
       return {
         // listShow: true,
         balls: [
@@ -88,25 +87,26 @@
           {show: false},
           {show: false}
         ],
+        dropBalls: [],
         fold: true
       }
     },
     computed: {
-      totalPrice () {
+      totalPrice() {
         let total = 0
         this.selectFoods.forEach((food) => {
           total += food.price * food.count
         })
         return total
       },
-      totalCount () {
+      totalCount() {
         let count = 0
         this.selectFoods.forEach((food) => {
           count += food.count
         })
         return count
       },
-      payDesc () {
+      payDesc() {
         if (this.totalPrice === 0) {
           return `¥ ${this.minPrice} 起送`
         } else if (this.totalPrice < this.minPrice) {
@@ -115,14 +115,14 @@
           return '去结算'
         }
       },
-      payClass () {
+      payClass() {
         if (this.totalPrice < this.minPrice) {
           return 'not-enough'
         } else {
           return 'enough'
         }
       },
-      listShow () {
+      listShow() {
         if (!this.totalCount) {
           this.fold = true
           return false
@@ -143,30 +143,75 @@
       }
     },
     methods: {
-      drop (el) {
-        console.log(el)
+      drop(el) {
+        for (let i = 0; i < this.balls.length; i++) {
+          let ball = this.balls[i]
+          if (!ball.show) {
+            ball.show = true
+            ball.el = el
+            this.dropBalls.push(ball)
+            return
+          }
+        }
       },
-      toggleList () {
+      toggleList() {
         if (!this.totalCount) {
           return
         }
         this.fold = !this.fold
       },
-      empty () {
+      empty() {
         this.selectFoods.forEach((food) => {
           food.count = 0
         })
       },
-      foldList () {
+      foldList() {
         this.fold = true
       },
-      pay () {
+      pay() {
         if (this.totalPrice < this.minPrice) {
           return
         }
         // alert('支付' + this.totalPrice)
         alert(`支付${this.totalPrice}元`)
         // ev.stopPropagation()  使用vue提供的 @click.stop.prevent="pay", 来阻止默认和冒泡
+      },
+      beforeDrop(el) {
+        let count = this.balls.length
+        while (count--) {
+          let ball = this.balls[count]
+          if (ball.show) {
+            let rect = ball.el.getBoundingClientRect()
+            let x = rect.left - 32
+            let y = -(window.innerHeight - rect.top - 22)
+            el.style.display = ''
+            el.style.webkitTransform = `translate3d(0,${y}px,0)`
+            el.style.transform = `translate3d(0,${y}px,0)`
+            let inner = el.getElementsByClassName('inner-hook')[0]
+            inner.style.webkitTransform = `translate3d(${x}px,0,0)`
+            inner.style.transform = `translate3d(${x}px,0,0)`
+          }
+        }
+      },
+      dropping(el, done) {
+        /* eslint-disable no-unused-vars */
+        // rf 连续计算el.offsetHeight, 实现重绘
+        let rf = el.offsetHeight
+        this.$nextTick(() => {
+          el.style.webkitTransform = 'translate3d(0,0,0)'
+          el.style.transform = 'translate3d(0,0,0)'
+          let inner = el.getElementsByClassName('inner-hook')[0]
+          inner.style.webkitTransform = 'translate3d(0,0,0)'
+          inner.style.transform = 'translate3d(0,0,0)'
+          el.addEventListener('transitionend', done)
+        })
+      },
+      afterDrop(el) {
+        let ball = this.dropBalls.shift()
+        if (ball) {
+          ball.show = false
+          el.style.display = 'none'
+        }
       }
     },
     components: {
@@ -297,13 +342,13 @@
         bottom 22px
         z-index 200
         &.drop-enter-active, &.drop-leave-active {
-          transition all .4s
+          transition all .4s cubic-bezier(.49, -0.29, .75, .41)
           .inner {
             width 16px
             height 16px
             border-radius 50%
             background-color rgb(0, 160, 220)
-            transition all .4s
+            transition all .4s linear
           }
         }
       }
