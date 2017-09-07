@@ -149,6 +149,7 @@
           if (!ball.show) {
             ball.show = true
             ball.el = el
+            // console.log(ball.el)
             this.dropBalls.push(ball)
             return
           }
