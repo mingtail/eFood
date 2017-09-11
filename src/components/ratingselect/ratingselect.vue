@@ -47,19 +47,43 @@
         }
       }
     },
-    computed: {
+    data () {
+      return {
+        myType: this.selectType,
+        showCtn: this.onlyContent
+      }
+    },
+    watch: {
+      /**
+       *  Vue2.0 实现props双向数据绑定
+       *  1. 创建一个selectType的副本数据 => myType
+       *  2. watch监听props属性的selectType的变更,同步到组件内部data属性myType中
+       *  3. 组件内的myType变更后向外部发送事件通知(传入组件内部变更后的值)
+       *  4. 外部组件接受派发的事件,接收传入的变更后的值
+       * */
+      selectType: function (type) {
+        this.myType = type
+      },
+      myType: function (type) {
+        this.$emit('ratingType', type)
+      },
+      onlyContent: function (val) {
+        this.showCtn = val
+      },
+      showCtn: function (val) {
+        this.$emit('toggleCtn', val)
+      }
     },
     methods: {
+      // 子组件中, 不能直接修改父组件的数据=>修改副本值, 然后通过事件派发出去
       select (type) {
 //        if (!event._constructed) {
 //          return
 //        }
-        this.selectType = type
-        // this.$emit('ratingType', type)
+        this.myType = type
       },
       toggleContent () {
-        this.onlyContent = !this.onlyContent
-        // this.$emit('toggleCtn', this.onlyContent)
+        this.showCtn = !this.showCtn
       }
     }
   }

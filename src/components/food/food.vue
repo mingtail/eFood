@@ -33,7 +33,13 @@
         <split></split>
         <div class="rating">
           <h1 class="title">商品评价</h1>
-          <rating-select :select-type="selectType" :only-content="onlyContent" :desc="desc" :ratings="food.ratings"></rating-select>
+          <rating-select :select-type="selectType"
+                         :only-content="onlyContent"
+                         :desc="desc"
+                         :ratings="food.ratings"
+                         @ratingType="ratingType"
+                         @toggleCtn="toggleCtn">
+          </rating-select>
         </div>
       </div>
     </div>
@@ -90,6 +96,12 @@
 //        }
         this.$emit('add', event.target)
         this.$set(this.food, 'count', 1)
+      },
+      ratingType (type) {
+        this.selectType = type
+      },
+      toggleCtn (val) {
+        this.onlyContent = val
       }
     },
     components: {
