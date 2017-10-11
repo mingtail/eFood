@@ -40,6 +40,26 @@
                          @ratingType="ratingType"
                          @toggleCtn="toggleCtn">
           </rating-select>
+
+          <div class="rating-wrapper">
+            <ul v-show="food.ratings && food.ratings.length">
+              <!-- v-show 绑定一个带返回值(true/flase)的函数/表达式, 来动态改变现实的内容  另:[v-for指令也可用 of/in] -->
+              <li v-show="needShow(rating.rateType,rating.text)" v-for="rating in food.ratings"
+                  class="rating-item border-1px">
+                <div class="user">
+                  <span class="name">{{rating.username}}</span>
+                  <img :src="rating.avatar" class="avatar" width="12" height="12">
+                </div>
+                <div class="time">{{ rating.rateTime | formatTime }}</div>
+                <p class="text">
+                  <span
+                    :class="{'icon-thumb_up':rating.rateType===0,'icon-thumb_down':rating.rateType===1}"></span>{{rating.text}}
+                </p>
+              </li>
+            </ul>
+            <div v-show="!food.ratings || !food.ratings.length" class="no-rating">暂无评价</div>
+          </div>
+
         </div>
       </div>
     </div>
@@ -48,12 +68,12 @@
 
 <script type="text/javascript">
   import BScroll from 'better-scroll'
+  /* eslint-disable no-unused-vars */
+  import {formatDate, formatDate2} from '@/common/js/date'
   import CartControl from '@/components/cartcontrol/cartcontrol'
   import RatingSelect from '@/components/ratingselect/ratingselect'
   import Split from '@/components/split/split'
 
-  //  const POSITIVE = 0
-  //  const NEGATIVE = 1
   const ALL = 2
 
   export default {
@@ -76,7 +96,7 @@
       show () {
         this.showFlag = true
         this.selectType = ALL
-        this.onlyContent = true
+        this.onlyContent = false
         this.$nextTick(() => {
           if (!this.scroll) {
             this.scroll = new BScroll(this.$refs.food, {
@@ -97,11 +117,41 @@
         this.$emit('add', event.target)
         this.$set(this.food, 'count', 1)
       },
+      // 同步子组件的传值 ratingType / toggleCtn
       ratingType (type) {
         this.selectType = type
+        // 要异步的更新scroll的滚动区域
+        this.$nextTick(() => {
+          this.scroll.refresh()
+        })
       },
       toggleCtn (val) {
         this.onlyContent = val
+        this.$nextTick(() => {
+          this.scroll.refresh()
+        })
+      },
+      // v-show 绑定一个带返回值(true/false)的函数/表达式
+      needShow (type, text) {
+        if (this.onlyContent && !text) {
+          return false
+        }
+        if (this.selectType === ALL) {
+          return true
+        } else {
+          return type === this.selectType
+        }
+      }
+    },
+    filters: {
+      formatTime (time) {
+        let date = new Date(time)
+        /** 封装的formatDate formatDate2 都能把时间戳格式化, 不同的是formatDate可以在参数随意调整格式.
+         *  时间戳-> 没有时区的限制, 代表唯一的时间.
+         *  getDate()获取的是当前时区的小时数.
+         * */
+        return formatDate(date, 'yyyy-MM-dd hh:mm')
+        // return formatDate2(date)
       }
     },
     components: {
@@ -113,6 +163,7 @@
 </script>
 
 <style scoped lang="stylus" rel="stylesheet/stylus">
+  @import "~@/common/stylus/mixin.styl"
 
   .food {
     position: fixed
@@ -237,6 +288,58 @@
         margin-left 18px
         font-size 14px
         color rgb(7, 17, 27)
+      }
+      .rating-wrapper {
+        padding 0 18px
+        .rating-item {
+          position relative
+          padding 16px 0
+          border-1px(rgba(7, 17, 27, .1))
+          .user {
+            position absolute
+            right 0
+            top 16px
+            line-height 12px
+            font-size 0
+            .name {
+              display inline-block
+              margin-right 6px
+              vertical-align top
+              font-size 16px
+              color rgb(147, 153, 159)
+            }
+            .avatar {
+              border-radius 50%
+            }
+          }
+          .time {
+            margin-bottom 6px
+            line-height 12px
+            font-size 10px
+            color rgb(147, 153, 159)
+          }
+          .text {
+            line-height 16px
+            font-size 12px
+            color rgb(7, 17, 27)
+            .icon-thumb_up, .icon-thumb_down {
+              line-height 16px
+              margin-right 4px
+              font-size 12px
+            }
+            .icon-thumb_up {
+              color rgb(0, 160, 220)
+            }
+            .icon-thumb_down {
+              color rgb(147, 153, 159)
+            }
+          }
+        }
+        .no-rating {
+          padding 16px 0
+          font-size 12px
+          color rgb(147, 153, 159)
+        }
       }
     }
   }

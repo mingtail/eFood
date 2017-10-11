@@ -194,6 +194,7 @@
           }
         }
       },
+      // 在enter和leave中, 回调函数done是必须的, 否则开始和离开会被同时调用, 过渡动画会立即完成
       dropping(el, done) {
         /* eslint-disable no-unused-vars */
         // rf 连续计算el.offsetHeight, 实现重绘

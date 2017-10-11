@@ -22,6 +22,7 @@
     created () {
       this.$http.get('/api/seller').then((res) => {
         res = res.body
+        // console.log(res) // res.body是获取它的data值
         if (res.errno === ERR_OK) {
           this.seller = res.data
           // console.log(this.seller)
