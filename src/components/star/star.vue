@@ -90,7 +90,7 @@
     }
     &.star-24 {
       .star-item {
-        margin-right 23px
+        margin-right 3px
         width 10px
         height 10px
         background-size 10px

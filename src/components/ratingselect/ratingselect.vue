@@ -8,7 +8,7 @@
       <span @click="select(1)" class="block negative" :class="{active:selectType===1}">{{desc.negative}}<span
         class="count">{{negatives.length}}</span></span>
     </div>
-    <div @click="toggleContent" class="switch" :class="{on:onlyContent}">
+    <div @click="toggleContent" class="switch border-1px" :class="{on:onlyContent}">
       <span class="icon-check_circle"></span>
       <span class="text">只看有内容的评价</span>
     </div>
@@ -23,6 +23,7 @@
   export default {
     props: {
       ratings: {
+        /* 数组、对象的默认值需要由一个工厂函数返回 */
         type: Array,
         default () {
           return []
@@ -30,7 +31,7 @@
       },
       selectType: {
         type: Number,
-        defaule: ALL
+        default: ALL
       },
       onlyContent: {
         type: Boolean,
@@ -145,7 +146,7 @@
       line-height 24px
       font-size 0
       color rgb(147, 153, 159)
-      border-bottom rgba(7, 17, 27, .1)
+      border-1px(rgba(7, 17, 27, .1))
       &.on {
         .icon-check_circle {
           color #00c850
